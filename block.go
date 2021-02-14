@@ -1082,6 +1082,27 @@ func (p *Markdown) uliPrefix(data []byte) int {
 	return i + 2
 }
 
+func (p *Markdown) chiPrefix(data []byte) int {
+	i := 0
+	// start with up to 3 spaces
+	for i < len(data) && i < 3 && data[i] == ' ' {
+		i++
+	}
+	if i >= len(data)-1 {
+		return 0
+	}
+	// need one of {'* [ ]', '+ [ ]', '- [ ]'} followed by a space or a tab
+	if (data[i] != '*' && data[i] != '+' && data[i] != '-') ||
+		(data[i+1] != ' ' && data[i+1] != '\t') ||
+		(len(data) <= i+4) ||
+		data[i+2] != '[' ||
+		(data[i+3] != ' ' && data[i+3] != 'x') ||
+		data[i+4] != ']' {
+		return 0
+	}
+	return i + 5
+}
+
 // returns ordered list item prefix
 func (p *Markdown) oliPrefix(data []byte) int {
 	i := 0
@@ -1221,6 +1242,19 @@ func (p *Markdown) listItem(data []byte, flags *ListType) int {
 		i = p.oliPrefix(data)
 	} else {
 		bulletChar = data[i-2]
+
+		j := p.chiPrefix(data)
+
+		if j > 0 {
+			if data[j-2] == ' ' {
+				*flags &= ^ListItemChecked
+				*flags |= ListItemUnchecked
+			} else if data[j-2] == 'x' {
+				*flags &= ^ListItemUnchecked
+				*flags |= ListItemChecked
+			}
+			i = j
+		}
 	}
 	if i == 0 {
 		i = p.dliPrefix(data)

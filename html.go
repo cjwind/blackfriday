@@ -750,6 +750,13 @@ func (r *HTMLRenderer) RenderNode(w io.Writer, node *Node, entering bool) WalkSt
 				break
 			}
 			r.out(w, openTag)
+
+			if node.ListFlags&ListItemUnchecked != 0 {
+				r.out(w, []byte("<input type=\"checkbox\">"))
+			}
+			if node.ListFlags&ListItemChecked != 0 {
+				r.out(w, []byte("<input type=\"checkbox\" checked>"))
+			}
 		} else {
 			if node.ListData.RefLink != nil {
 				slug := slugify(node.ListData.RefLink)

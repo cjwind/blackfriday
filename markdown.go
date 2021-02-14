@@ -70,6 +70,8 @@ const (
 	ListItemContainsBlock
 	ListItemBeginningOfList // TODO: figure out if this is of any use now
 	ListItemEndOfList
+	ListItemChecked
+	ListItemUnchecked
 )
 
 // CellAlignFlags holds a type of alignment in a table cell.

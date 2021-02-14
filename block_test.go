@@ -753,6 +753,15 @@ func TestUnorderedList(t *testing.T) {
 	doTestsBlock(t, tests, 0)
 }
 
+func TestCheckList(t *testing.T) {
+	t.Parallel()
+	var tests = []string{
+		"* [ ] Foo\n* [ ] Bar\n* [x] Checked\n",
+		"<ul>\n<li><input type=\"checkbox\">Foo</li>\n<li><input type=\"checkbox\">Bar</li>\n<li><input type=\"checkbox\" checked>Checked</li>\n</ul>\n",
+	}
+	doTestsBlock(t, tests, 0)
+}
+
 func TestOrderedList(t *testing.T) {
 	t.Parallel()
 	var tests = []string{
